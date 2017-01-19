@@ -1,0 +1,8 @@
+deb http://ftp.uk.debian.org/debian/ jessie main contrib non-free
+deb-src http://ftp.uk.debian.org/debian/ jessie main contrib non-free
+
+deb http://security.debian.org/ jessie/updates main contrib non-free
+deb-src http://security.debian.org/ jessie/updates main contrib non-free
+
+# Docker repository
+deb https://apt.dockerproject.org/repo debian-jessie main

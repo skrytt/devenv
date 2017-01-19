@@ -1,7 +1,11 @@
-# 
+# Disabled by default but can be enabled instead of stable.list (comment that file out)
+# to prepare for a dist-upgrade to stretch (testing)
 
-deb http://ftp.uk.debian.org/debian/ stretch main contrib non-free
-deb-src http://ftp.uk.debian.org/debian/ stretch main contrib non-free
+#deb http://ftp.uk.debian.org/debian/ stretch main contrib non-free
+#deb-src http://ftp.uk.debian.org/debian/ stretch main contrib non-free
 
-deb http://security.debian.org/ stretch/updates main contrib non-free
-deb-src http://security.debian.org/ stretch/updates main contrib non-free
+#deb http://security.debian.org/ stretch/updates main contrib non-free
+#deb-src http://security.debian.org/ stretch/updates main contrib non-free
+
+# Docker repository
+#deb https://apt.dockerproject.org/repo debian-stretch main
