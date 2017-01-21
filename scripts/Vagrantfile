@@ -39,8 +39,8 @@ Vagrant.configure("2") do |config|
     do
       mkdir -p ${dir}
     done
-    for file in /etc/apt/sources.list /etc/skel/.vimrc /etc/skel/.xinitrc \
-    /etc/skel/.config/lxterminal/lxterminal.conf
+    for file in /etc/skel/.vimrc /etc/skel/.xinitrc \
+    /etc/skel/.config/lxterminal/lxterminal.conf /etc/skel/.i3/config
     do
       cp {.,}${file}
     done
