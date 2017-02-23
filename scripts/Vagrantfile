@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/contrib-jessie64"
+  config.vm.box = "remram/debian-9-amd64"
 
   # Forwarded port mappings
   config.vm.network "forwarded_port", guest: 80, host: 8080
@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "10.0.0.2"
 
   # Share an additional folder to the guest VM
-  config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder "../../vboxshare", "/vboxshare"
 
   # Provider-specific configuration for Virtualbox
   config.vm.provider "virtualbox" do |vb|
@@ -24,27 +24,22 @@ Vagrant.configure("2") do |config|
 
   # Provisioning script
   config.vm.provision "shell", inline: <<-SHELL
-    # Packages available from default repositories
-    apt-get update
-    apt-get install -y apt-transport-https ca-certificates software-properties-common
-    apt-get install -y linux-image-extra-$(uname -r) linux-image-extra-virtual linux-headers-amd64
-    apt-get install -y sudo vim git curl wget rsync
-    apt-get install -y gcc g++ make python python3 pylint ruby
-    apt-get install -y xserver-xorg xinit i3 feh lxterminal
-    apt-get install -y virtualbox-guest-utils virtualbox-guest-dkms virtualbox-guest-x11
+    # Get git
+    apt update
+    apt install git
     
-    # Install /etc/skel config and also new sources.list.d entries, including Docker repository
-    cd /var/tmp && git clone https://github.com/skrytt/devenv && cd devenv
-    for dir in /etc/apt/sources.list.d /etc/skel/.i3 /etc/skel/.config/lxterminal
-    do
-      mkdir -p ${dir}
-    done
-    for file in /etc/apt/sources.list /etc/skel/.vimrc /etc/skel/.xinitrc \
-    /etc/skel/.config/lxterminal/lxterminal.conf
-    do
-      cp {.,}${file}
-    done
+    # Install /etc/skel config and also new sources.list.d entries
+    cd /var/tmp && git clone https://github.com/skrytt/devenv && cd devenv && chown -R root:root etc && \
+        rsync -a ./etc/ /etc/
     rm -rf /var/tmp/devenv
+    
+    # Continue installing
+    apt update
+    apt install -y apt-transport-https ca-certificates software-properties-common
+    apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual linux-headers-amd64
+    apt install -y vim curl wget rsync
+    apt install -y gcc g++ make python python3 pylint ruby
+    apt install -y xserver-xorg xinit i3 feh lxterminal
 
     # Docker 
     # See: https://docs.docker.com/engine/installation/linux/debian/
@@ -54,8 +49,8 @@ Vagrant.configure("2") do |config|
        "deb https://apt.dockerproject.org/repo/ \
        debian-$(lsb_release -cs) \
        main"
-    apt-get update
-    apt-get -y install docker-engine
+    apt update
+    apt -y install docker-engine
 
     # User config    
     useradd -m -U -s/bin/bash mkemp
@@ -64,6 +59,8 @@ Vagrant.configure("2") do |config|
     mkdir -p /home/mkemp/.vim/autoload /home/mkemp/.vim/bundle && curl -LSso /home/mkemp/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
     # Install syntastic for mkemp
     cd /home/mkemp/.vim/bundle && git clone --depth=1 https://github.com/vim-syntastic/syntastic.git
+    # Install solarized colourscheme for mkemp
+    cd /home/mkemp/.vim/bundle && git clone https://github.com/altercation/vim-colors-solarized.git
     # Fix permissions
     chown -R mkemp:mkemp /home/mkemp
     
