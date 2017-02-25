@@ -2,46 +2,47 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "remram/debian-9-amd64"
+  config.vm.box = "fujimakishouten/debian-stretch64"
 
   # Forwarded port mappings
   config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 443, host: 8443
   
   # Private network
   config.vm.network "private_network", ip: "10.0.0.2"
 
-  # Share an additional folder to the guest VM
-  config.vm.synced_folder "../../vboxshare", "/vboxshare"
-
+  # Shared data folder folder to the guest VM
+  config.vm.synced_folder "D:/vboxshare", "/mnt/vboxshare"
+  
   # Provider-specific configuration for Virtualbox
   config.vm.provider "virtualbox" do |vb|
-    # Display the VirtualBox GUI when booting the machine
     vb.gui = true
-    # Customize the amount of memory on the VM:
     vb.memory = "1024"
   end
+  
+  # Workaround for TTY errors
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   # Provisioning script
   config.vm.provision "shell", inline: <<-SHELL
-    # Get git
+    export DEBIAN_FRONTEND=noninteractive
     apt update
-    apt install git
-    
-    # Install /etc/skel config and also new sources.list.d entries
-    cd /var/tmp && git clone https://github.com/skrytt/devenv && cd devenv && chown -R root:root etc && \
-        rsync -a ./etc/ /etc/
-    rm -rf /var/tmp/devenv
-    
-    # Continue installing
-    apt update
-    apt install -y apt-transport-https ca-certificates software-properties-common
-    apt install -y linux-image-extra-$(uname -r) linux-image-extra-virtual linux-headers-amd64
-    apt install -y vim curl wget rsync
-    apt install -y gcc g++ make python python3 pylint ruby
-    apt install -y xserver-xorg xinit i3 feh lxterminal
+    apt upgrade -y
+    # Some packages we need for grabbing data from the net and for supporting https transport for apt
+    apt install -y git apt-transport-https ca-certificates software-properties-common curl
 
-    # Docker 
+    # Wipe existing apt repository configuration
+    rm -f /etc/apt/sources.list
+    rm -f /etc/apt/sources.list.d/*
+
+    # Grab files from github, including new sources.list.d entries. Install them to /etc/.
+    # If user mkemp already exists (e.g. if this is a reprovision) then copy the files to home too.
+    test -d "/var/tmp/devenv" || git clone https://github.com/skrytt/devenv /var/tmp/devenv
+    cd /var/tmp/devenv
+    chown -R root:root ./etc && rsync -a {.,}/etc/
+    chown -R mkemp:mkemp ./etc && rsync -a ./etc/skel/ /home/mkemp/
+    rm -rf /var/tmp/devenv
+
+    # Get Docker repository key, fingerprint and add repo
     # See: https://docs.docker.com/engine/installation/linux/debian/
     curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add -
     apt-key fingerprint 58118E89F3A912897C070ADBF76221572C52609D
@@ -49,25 +50,33 @@ Vagrant.configure("2") do |config|
        "deb https://apt.dockerproject.org/repo/ \
        debian-$(lsb_release -cs) \
        main"
-    apt update
-    apt -y install docker-engine
 
-    # User config    
-    useradd -m -U -s/bin/bash mkemp
+    # Continue installing
+    apt update
+    apt install -y linux-image-$(uname -r) linux-headers-amd64 \
+        vim wget rsync gcc g++ make automake python python3 pylint ruby xserver-xorg xinit \
+        i3 feh lxterminal docker-engine
+
+    # User config and updating of home config
+    test -d "/home/mkemp" || useradd -m -U -s/bin/bash mkemp
+    # Symlink to the vboxshare dir
+    test -e /home/mkemp/vboxshare || ln -s /home/mkemp/vboxshare /mnt/vboxshare
     
+    # Install plugins for vim
     # Install pathogen for mkemp
     mkdir -p /home/mkemp/.vim/autoload /home/mkemp/.vim/bundle && curl -LSso /home/mkemp/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
     # Install syntastic for mkemp
     cd /home/mkemp/.vim/bundle && git clone --depth=1 https://github.com/vim-syntastic/syntastic.git
     # Install solarized colourscheme for mkemp
     cd /home/mkemp/.vim/bundle && git clone https://github.com/altercation/vim-colors-solarized.git
-    # Fix permissions
-    chown -R mkemp:mkemp /home/mkemp
-    
+    # Fix permissions for vim plugins
+    chown -R mkemp:mkemp /home/mkemp/.vim
+
     # Give mkemp sudo permissions
     bash -c 'echo "mkemp ALL=(ALL:ALL) ALL" | (EDITOR="tee -a" visudo)'
-    
-    # mkemp's password will need to be set manually by 'vagrant' user using: 'passwd mkemp'
-    
+
+    # mkemp's password will need to be set manually by 'vagrant' user using: 'passwd mkemp'.
+    # A manual re-installation of VirtualBox Guest Additions is then recommended using an up-to-date guest additions ISO.
+
   SHELL
 end
