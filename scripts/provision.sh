@@ -87,7 +87,7 @@ if ! apt-get install -y \
   gcc g++ python python3 elixir ruby \
   make automake cmake \
   pylint shellcheck \
-  xserver-xorg xinit rxvt-unicode feh compton \
+  xserver-xorg xinit rxvt-unicode feh compton fonts-oxygen \
   docker-ce
 then
   echo "Could not install packages (stage 2) - aborting"

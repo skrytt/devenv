@@ -20,9 +20,3 @@ fi
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
-
-# VBoxClient-all needs to run once only. It will result in some VBoxClient processes
-# being started. We don't need to restart them again the next time we open a new login session.
-# To complicate things there are two pre-existing VBoxClient processes...
-# The below is quite crude, but seems to work.
-test "$(pgrep -c VBoxClient)" -le 2 && VBoxClient-all
