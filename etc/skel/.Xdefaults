@@ -15,6 +15,9 @@ Xft.hintstyle:              hintslight
 ! http://pod.tst.eu/http://cvs.schmorp.de/rxvt-unicode/doc/rxvt.1.pod
 !-------------------------------------------------------------------------------
 
+! Fix font space
+URxvt.letterSpace: -1
+
 URxvt.depth:                32
 URxvt.geometry:             90x30
 URxvt.transparent:          false
@@ -26,11 +29,8 @@ URxvt.lineSpace:            0
 
 ! Fonts
 URxvt.allow_bold:           false
-URxvt*font: xft:Oxygen Mono:size=11
-URxvt*boldFont: xft:Oxygen Mono:size=11
-
-! Fix font space
-URxvt*letterSpace: -1
+URxvt*font: xft:Oxygen Mono:pixelsize=16
+URxvt*boldFont: xft:Oxygen Mono:pixelsize=16
 
 ! Scrollbar
 URxvt.scrollStyle:          rxvt
