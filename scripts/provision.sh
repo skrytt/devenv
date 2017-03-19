@@ -145,7 +145,7 @@ git_get_latest "/home/mkemp/.vim/bundle/vim-colors-solarized" "https://github.co
 # Airline
 git_get_latest "/home/mkemp/.vim/bundle/vim-airline" "https://github.com/vim-airline/vim-airline"
 # Airline themes
-git_get_latest "/home/mkemp/.vim/bundle/vim-airline-themes" "https://github.com/vim-airline-themes/vim-airline-themes"
+git_get_latest "/home/mkemp/.vim/bundle/vim-airline-themes" "https://github.com/vim-airline/vim-airline-themes"
 
 # Fix permissions for vim plugins
 chown -R mkemp:mkemp /home/mkemp/.vim
