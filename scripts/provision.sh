@@ -98,7 +98,7 @@ fi
 git_get_latest "/var/tmp/i3-gaps" "https://github.com/Airblader/i3"
 cd "/var/tmp/i3-gaps" && {
   # Before we build, get the i3-gaps dependencies
-  if ! apt-get install \
+  if ! apt-get install -y \
     libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev xcb libxcb1-dev \
     libxcb-icccm4-dev libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev \
     libxkbcommon-dev libxcb-xinerama0-dev libxkbcommon-x11-dev libstartup-notification0-dev \
