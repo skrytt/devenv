@@ -152,3 +152,4 @@ gaps outer 0
 #startup
 exec feh --bg-center "$(find ~/.wallpapers -type f | shuf -n 1)"
 exec compton
+exec setxkbmap gb
