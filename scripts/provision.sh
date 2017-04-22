@@ -61,8 +61,10 @@ git_get_latest "/var/tmp/devenv" "https://github.com/skrytt/devenv"
 cd "/var/tmp/devenv" && {
   rm -f /etc/apt/sources.list
   rm -f /etc/apt/sources.list.d/*
-  chown -R root:root ./etc && rsync -a {.,}/etc/
-  chown -R mkemp:mkemp ./etc && rsync -a ./etc/skel/ /home/mkemp/
+  chown -R root:root ./etc
+  chown -R mkemp:mkemp ./etc
+  rsync -a ./etc/ /etc/
+  rsync -a ./etc/skel/ /home/mkemp/
 }
 
 # Configure repo for Docker CE, then apt-get update to make it available
