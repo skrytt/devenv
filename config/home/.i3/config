@@ -145,11 +145,11 @@ mode "resize" {
 #}
 
 # i3-gaps config
-for_window [class="^.*"] border pixel 0
-gaps inner 8
-gaps outer 0
+#for_window [class="^.*"] border pixel 0
+#gaps inner 8
+#gaps outer 0
 
 #startup
-exec feh --bg-center "$(find ~/.wallpapers -type f | shuf -n 1)"
+exec feh --bg-center "$(find /vboxshare/wallpapers -type f | shuf -n 1)"
 exec compton
 exec setxkbmap gb
