@@ -1,5 +1,4 @@
 {% for repo_name, repo_url in [
-  ('devenv', 'https://github.com/skrytt/devenv'),
   ('pathogen', 'https://github.com/tpope/vim-pathogen'),
 ] %}
 {{ repo_name }}_repo:
