@@ -5,7 +5,7 @@
 {{ repo_name }}_repo:
   git.latest:
     - name: {{ repo_url }}
-    - target: '/vboxshare/git-local-repos/{{ repo_name }}'
+    - target: '{{ pillar['git_local_repos_dir'] }}/{{ repo_name }}'
 {% endfor %}
 
 {% for repo_name, repo_url in [
@@ -18,7 +18,7 @@
 {{ repo_name }}_repo:
   git.latest:
     - name: {{ repo_url }}
-    - target: '/home/vagrant/.vim/bundle/{{ repo_name }}'
+    - target: '/home/{{ pillar['target_user'] }}/.vim/bundle/{{ repo_name }}'
     - require:
-      - file: /home/vagrant/.vim/autoload/pathogen.vim
+      - file: /home/{{ pillar['target_user'] }}/.vim/autoload/pathogen.vim
 {% endfor %}
